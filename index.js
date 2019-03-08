@@ -71,7 +71,7 @@ const app = express()
 app.set('port', (process.env.PORT || 6000))
 app.use(express.static(__dirname + '/public'))
 
-app.get('/', function(request, response) {
+app.get('/', async function(request, response) {
     let url = request.params.url;
     let strategy = request.params.tab;
     if (strategy == null) {
@@ -88,12 +88,10 @@ app.get('/', function(request, response) {
         config = mobileConfig;
     }
 
-    launchChromeAndRunLighthouse(url, opts, config).then(results => {
+    await launchChromeAndRunLighthouse(url, opts, config).then(results => {
         resp = results;
+        response.send(resp)
     });
-
-
-    response.send(resp)
 })
 
 app.listen(app.get('port'), function() {
