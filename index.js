@@ -45,20 +45,17 @@ const desktopConfig = {
     extends: 'lighthouse:default',
     settings: {
         maxWaitForLoad: 35 * 1000,
+        emulatedFormFactor: 'desktop',
+        throttling: {
+            // Using a "broadband" connection type
+            // Corresponds to "Dense 4G 25th percentile" in https://docs.google.com/document/d/1Ft1Bnq9-t4jK5egLSOc28IL4TvR-Tt0se_1faTA4KTY/edit#heading=h.bb7nfy2x9e5v
+            rttMs: 40,
+            throughputKbps: 10 * 1024,
+            cpuSlowdownMultiplier: 1,
+        },
         // Skip the h2 audit so it doesn't lie to us. See https://github.com/GoogleChrome/lighthouse/issues/6539
         skipAudits: ['uses-http2'],
-    },
-    audits: [
-        'metrics/first-contentful-paint-3g',
-    ],
-    // @ts-ignore TODO(bckenny): type extended Config where e.g. category.title isn't required
-    categories: {
-        performance: {
-            auditRefs: [
-                {id: 'first-contentful-paint-3g', weight: 0},
-            ],
-        },
-    },
+    }
 };
 
 let resp = {};
@@ -78,7 +75,7 @@ app.get('/', async function(request, response) {
         strategy = 'mobile';
     }
 
-   
+
     if (url == null) {
         url = 'https://www.consumerreports.org/cro/index.htm';
     }
