@@ -78,6 +78,8 @@ app.get('/', async function(request, response) {
         strategy = 'mobile';
     }
 
+    console.log(request.params);
+
     if (url == null) {
         url = 'https://www.consumerreports.org/cro/index.htm';
     }
