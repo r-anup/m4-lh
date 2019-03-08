@@ -16,12 +16,33 @@ function launchChromeAndRunLighthouse(url, opts, config = null) {
 
 const opts = {
     onlyCategories: ['performance'],
-    chromeFlags: ['--show-paint-rects', '--headless']
-    
+    chromeFlags: ['--headless']
+
+};
+
+
+const config = {
+    extends: 'lighthouse:default',
+    settings: {
+        maxWaitForLoad: 35 * 1000,
+        // Skip the h2 audit so it doesn't lie to us. See https://github.com/GoogleChrome/lighthouse/issues/6539
+        skipAudits: ['uses-http2'],
+    },
+    audits: [
+        'metrics/first-contentful-paint-3g',
+    ],
+    // @ts-ignore TODO(bckenny): type extended Config where e.g. category.title isn't required
+    categories: {
+        performance: {
+            auditRefs: [
+                {id: 'first-contentful-paint-3g', weight: 0},
+            ],
+        },
+    },
 };
 
 // Usage:
-launchChromeAndRunLighthouse('https://www.consumerreports.org', opts).then(results => {
+launchChromeAndRunLighthouse('https://www.consumerreports.org', opts, config).then(results => {
     console.log(results);
     // Use results!
 });
