@@ -1,10 +1,24 @@
-const express = require('express')
-const path = require('path')
-const PORT = process.env.PORT || 5000
+const lighthouse = require('lighthouse');
+const chromeLauncher = require('chrome-launcher');
 
-express()
-  .use(express.static(path.join(__dirname, 'public')))
-  .set('views', path.join(__dirname, 'views'))
-  .set('view engine', 'ejs')
-  .get('/', (req, res) => res.render('pages/index'))
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`))
+function launchChromeAndRunLighthouse(url, opts, config = null) {
+    return chromeLauncher.launch({chromeFlags: opts.chromeFlags}).then(chrome => {
+        opts.port = chrome.port;
+        return lighthouse(url, opts, config).then(results => {
+            // use results.lhr for the JS-consumeable output
+            // https://github.com/GoogleChrome/lighthouse/blob/master/types/lhr.d.ts
+            // use results.report for the HTML/JSON/CSV output as a string
+            // use results.artifacts for the trace/screenshots/other specific case you need (rarer)
+            return chrome.kill().then(() => results.lhr)
+        });
+    });
+}
+
+const opts = {
+    chromeFlags: ['--show-paint-rects']
+};
+
+// Usage:
+launchChromeAndRunLighthouse('https://www.consumerreports.org', opts).then(results => {
+    // Use results!
+});
