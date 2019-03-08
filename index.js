@@ -70,7 +70,7 @@ app.use(express.static(__dirname + '/public'))
 
 app.get('/', async function(request, response) {
     let url = request.query.url;
-    let strategy = request.query.tab;
+    let strategy = request.query.strategy;
     if (strategy == null) {
         strategy = 'mobile';
     }
