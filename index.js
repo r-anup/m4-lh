@@ -41,8 +41,25 @@ const config = {
     },
 };
 
+let resp = {};
 // Usage:
 launchChromeAndRunLighthouse('https://www.consumerreports.org', opts, config).then(results => {
-    console.log(results);
+    resp = results;
+    //console.log(results);
     // Use results!
 });
+
+const express = require('express')
+const app = express()
+
+
+app.set('port', (process.env.PORT || 6000))
+app.use(express.static(__dirname + '/public'))
+
+app.get('/', function(request, response) {
+    response.send(resp)
+})
+
+app.listen(app.get('port'), function() {
+    console.log("Node app is running at localhost:" + app.get('port'))
+})
