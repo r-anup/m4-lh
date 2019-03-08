@@ -21,5 +21,6 @@ const opts = {
 
 // Usage:
 launchChromeAndRunLighthouse('https://www.consumerreports.org', opts).then(results => {
+    console.log(results);
     // Use results!
 });
