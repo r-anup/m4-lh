@@ -72,14 +72,13 @@ app.set('port', (process.env.PORT || 6000))
 app.use(express.static(__dirname + '/public'))
 
 app.get('/', async function(request, response) {
-    let url = request.params.url;
-    let strategy = request.params.tab;
+    let url = request.query.url;
+    let strategy = request.query.tab;
     if (strategy == null) {
         strategy = 'mobile';
     }
 
-    console.log(request.params);
-
+   
     if (url == null) {
         url = 'https://www.consumerreports.org/cro/index.htm';
     }
