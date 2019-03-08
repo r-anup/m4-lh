@@ -15,7 +15,8 @@ function launchChromeAndRunLighthouse(url, opts, config = null) {
 }
 
 const opts = {
-    chromeFlags: ['--show-paint-rects']
+    onlyCategories: ['performance'],
+    chromeFlags: ['--show-paint-rects', '--headless']
 };
 
 // Usage:
