@@ -62,11 +62,12 @@ let resp = {};
 // Usage:
 
 const express = require('express')
+const cors = require('cors');
 const app = express()
-
 
 app.set('port', (process.env.PORT || 6000))
 app.use(express.static(__dirname + '/public'))
+app.use(cors());
 
 app.get('/', async function(request, response) {
     let url = request.query.url;
