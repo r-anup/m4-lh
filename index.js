@@ -21,7 +21,27 @@ const opts = {
 };
 
 
-const config = {
+const mobileConfig = {
+    extends: 'lighthouse:default',
+    settings: {
+        maxWaitForLoad: 35 * 1000,
+        // Skip the h2 audit so it doesn't lie to us. See https://github.com/GoogleChrome/lighthouse/issues/6539
+        skipAudits: ['uses-http2'],
+    },
+    audits: [
+        'metrics/first-contentful-paint-3g',
+    ],
+    // @ts-ignore TODO(bckenny): type extended Config where e.g. category.title isn't required
+    categories: {
+        performance: {
+            auditRefs: [
+                {id: 'first-contentful-paint-3g', weight: 0},
+            ],
+        },
+    },
+};
+
+const desktopConfig = {
     extends: 'lighthouse:default',
     settings: {
         maxWaitForLoad: 35 * 1000,
@@ -43,11 +63,6 @@ const config = {
 
 let resp = {};
 // Usage:
-launchChromeAndRunLighthouse('https://www.consumerreports.org', opts, config).then(results => {
-    resp = results;
-    //console.log(results);
-    // Use results!
-});
 
 const express = require('express')
 const app = express()
@@ -57,6 +72,27 @@ app.set('port', (process.env.PORT || 6000))
 app.use(express.static(__dirname + '/public'))
 
 app.get('/', function(request, response) {
+    let url = request.params.url;
+    let strategy = request.params.tab;
+    if (strategy == null) {
+        strategy = 'mobile';
+    }
+
+    if (url == null) {
+        url = 'https://www.consumerreports.org/cro/index.htm';
+    }
+
+    let config = desktopConfig;
+
+    if (strategy == 'mobile') {
+        config = mobileConfig;
+    }
+
+    launchChromeAndRunLighthouse(url, opts, config).then(results => {
+        resp = results;
+    });
+
+
     response.send(resp)
 })
 
