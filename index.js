@@ -1,5 +1,6 @@
 const lighthouse = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
+let responseStatus;
 
 function launchChromeAndRunLighthouse(url, opts, config = null) {
     return chromeLauncher.launch({chromeFlags: opts.chromeFlags}).then(chrome => {
@@ -9,6 +10,8 @@ function launchChromeAndRunLighthouse(url, opts, config = null) {
             // https://github.com/GoogleChrome/lighthouse/blob/master/types/lhr.d.ts
             // use results.report for the HTML/JSON/CSV output as a string
             // use results.artifacts for the trace/screenshots/other specific case you need (rarer)
+            responseStatus = results.artifacts;
+            console.log(responseStatus);
             return chrome.kill().then(() => results.lhr)
         });
     });
@@ -46,6 +49,8 @@ const desktopConfig = {
     settings: {
         maxWaitForLoad: 35 * 1000,
         emulatedFormFactor: 'desktop',
+        // Skip the h2 audit so it doesn't lie to us. See https://github.com/GoogleChrome/lighthouse/issues/6539
+        skipAudits: ['uses-http2'],
         throttling: {
             // Using a "broadband" connection type
             // Corresponds to "Dense 4G 25th percentile" in https://docs.google.com/document/d/1Ft1Bnq9-t4jK5egLSOc28IL4TvR-Tt0se_1faTA4KTY/edit#heading=h.bb7nfy2x9e5v
@@ -53,8 +58,6 @@ const desktopConfig = {
             throughputKbps: 10 * 1024,
             cpuSlowdownMultiplier: 1,
         },
-        // Skip the h2 audit so it doesn't lie to us. See https://github.com/GoogleChrome/lighthouse/issues/6539
-        skipAudits: ['uses-http2'],
     }
 };
 
