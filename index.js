@@ -11,7 +11,6 @@ function launchChromeAndRunLighthouse(url, opts, config = null) {
             // use results.report for the HTML/JSON/CSV output as a string
             // use results.artifacts for the trace/screenshots/other specific case you need (rarer)
             responseStatus = results.artifacts;
-            console.log(responseStatus);
             return chrome.kill().then(() => results.lhr)
         });
     });
@@ -27,7 +26,7 @@ const opts = {
 const mobileConfig = {
     extends: 'lighthouse:default',
     settings: {
-        maxWaitForLoad: 35 * 1000,
+        maxWaitForLoad: 60 * 1000,
         // Skip the h2 audit so it doesn't lie to us. See https://github.com/GoogleChrome/lighthouse/issues/6539
         skipAudits: ['uses-http2'],
     },
@@ -47,7 +46,7 @@ const mobileConfig = {
 const desktopConfig = {
     extends: 'lighthouse:default',
     settings: {
-        maxWaitForLoad: 35 * 1000,
+        maxWaitForLoad: 60 * 1000,
         emulatedFormFactor: 'desktop',
         // Skip the h2 audit so it doesn't lie to us. See https://github.com/GoogleChrome/lighthouse/issues/6539
         skipAudits: ['uses-http2'],
